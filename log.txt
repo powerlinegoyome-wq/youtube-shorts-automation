@@ -1,26 +1,35 @@
 Traceback (most recent call last):
-  File "/usr/local/lib/python3.12/dist-packages/moviepy/video/VideoClip.py", line 1137, in __init__
-    subprocess_call(cmd, logger=None)
-  File "/usr/local/lib/python3.12/dist-packages/moviepy/tools.py", line 54, in subprocess_call
-    raise IOError(err.decode('utf8'))
-OSError: convert: attempt to perform an operation not allowed by the security policy `@/tmp/tmpwamu5_q7.txt' @ error/property.c/InterpretImageProperties/3706.
-convert: no images defined `PNG32:/tmp/tmpv34elrcs.png' @ error/convert.c/ConvertImageCommand/3229.
-
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/tmp/ipykernel_2004/4160029295.py", line 51, in run_with_error_reporting
+  File "/tmp/ipykernel_2004/3997365561.py", line 80, in run_with_error_reporting
     await main_process()
-  File "/tmp/ipykernel_2004/4160029295.py", line 40, in main_process
-    txt_clip = TextClip(word_data["word"].strip(), fontsize=100, color='yellow', font='Impact', stroke_color='black', stroke_width=3)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/moviepy/video/VideoClip.py", line 1146, in __init__
-    raise IOError(error)
-OSError: MoviePy Error: creation of None failed because of the following error:
-
-convert: attempt to perform an operation not allowed by the security policy `@/tmp/tmpwamu5_q7.txt' @ error/property.c/InterpretImageProperties/3706.
-convert: no images defined `PNG32:/tmp/tmpv34elrcs.png' @ error/convert.c/ConvertImageCommand/3229.
-.
-
-.This error can be due to the fact that ImageMagick is not installed on your computer, or (for Windows users) that you didn't specify the path to the ImageMagick binary in file conf.py, or that the path you specified is incorrect
+  File "/tmp/ipykernel_2004/3997365561.py", line 24, in main_process
+    response = model_ai.generate_content(prompt)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/generativeai/generative_models.py", line 331, in generate_content
+    response = self._client.generate_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/ai/generativelanguage_v1beta/services/generative_service/client.py", line 835, in generate_content
+    response = rpc(
+               ^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/api_core/gapic_v1/method.py", line 128, in __call__
+    return wrapped_func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/api_core/retry/retry_unary.py", line 294, in retry_wrapped_func
+    return retry_target(
+           ^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/api_core/retry/retry_unary.py", line 156, in retry_target
+    next_sleep = _retry_error_helper(
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/api_core/retry/retry_base.py", line 216, in _retry_error_helper
+    raise final_exc from source_exc
+  File "/usr/local/lib/python3.12/dist-packages/google/api_core/retry/retry_unary.py", line 147, in retry_target
+    result = target()
+             ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/api_core/timeout.py", line 130, in func_with_timeout
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/api_core/grpc_helpers.py", line 55, in error_remapped_callable
+    return callable_(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/google/ai/generativelanguage_v1beta/services/generative_service/transports/rest.py", line 1161, in __call__
+    raise core_exceptions.from_http_response(response)
+google.api_core.exceptions.NotFound: 404 POST https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?%24alt=json%3Benum-encoding%3Dint: models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
