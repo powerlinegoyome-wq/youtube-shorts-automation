@@ -1,7 +1,7 @@
 Traceback (most recent call last):
-  File "/tmp/ipykernel_2004/3997365561.py", line 80, in run_with_error_reporting
+  File "/tmp/ipykernel_914/1061717013.py", line 80, in run_with_error_reporting
     await main_process()
-  File "/tmp/ipykernel_2004/3997365561.py", line 24, in main_process
+  File "/tmp/ipykernel_914/1061717013.py", line 24, in main_process
     response = model_ai.generate_content(prompt)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/local/lib/python3.12/dist-packages/google/generativeai/generative_models.py", line 331, in generate_content
@@ -32,4 +32,4 @@ Traceback (most recent call last):
            ^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/local/lib/python3.12/dist-packages/google/ai/generativelanguage_v1beta/services/generative_service/transports/rest.py", line 1161, in __call__
     raise core_exceptions.from_http_response(response)
-google.api_core.exceptions.NotFound: 404 POST https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?%24alt=json%3Benum-encoding%3Dint: models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
+google.api_core.exceptions.NotFound: 404 POST https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?%24alt=json%3Benum-encoding%3Dint: models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ModelService.ListModels to see the list of available models and their supported methods.
