@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/ipykernel_2658/3731109242.py", line 45, in run_with_error_reporting
+    await main_process()
+  File "/tmp/ipykernel_2658/3731109242.py", line 20, in main_process
+    model = WhisperModel("base", device="cuda", compute_type="float16")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/faster_whisper/transcribe.py", line 689, in __init__
+    self.model = ctranslate2.models.Whisper(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: CUDA failed with error CUDA driver version is insufficient for CUDA runtime version
