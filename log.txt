@@ -1,27 +1,26 @@
 Traceback (most recent call last):
   File "/usr/local/lib/python3.12/dist-packages/moviepy/video/VideoClip.py", line 1137, in __init__
     subprocess_call(cmd, logger=None)
-  File "/usr/local/lib/python3.12/dist-packages/moviepy/tools.py", line 46, in subprocess_call
-    proc = sp.Popen(cmd, **popen_params)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
-    self._execute_child(args, executable, preexec_fn, close_fds,
-  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
-    raise child_exception_type(errno_num, err_msg, err_filename)
-FileNotFoundError: [Errno 2] No such file or directory: 'unset'
+  File "/usr/local/lib/python3.12/dist-packages/moviepy/tools.py", line 54, in subprocess_call
+    raise IOError(err.decode('utf8'))
+OSError: convert: attempt to perform an operation not allowed by the security policy `@/tmp/tmpwamu5_q7.txt' @ error/property.c/InterpretImageProperties/3706.
+convert: no images defined `PNG32:/tmp/tmpv34elrcs.png' @ error/convert.c/ConvertImageCommand/3229.
+
 
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/tmp/ipykernel_2004/3731109242.py", line 45, in run_with_error_reporting
+  File "/tmp/ipykernel_2004/4160029295.py", line 51, in run_with_error_reporting
     await main_process()
-  File "/tmp/ipykernel_2004/3731109242.py", line 34, in main_process
+  File "/tmp/ipykernel_2004/4160029295.py", line 40, in main_process
     txt_clip = TextClip(word_data["word"].strip(), fontsize=100, color='yellow', font='Impact', stroke_color='black', stroke_width=3)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/local/lib/python3.12/dist-packages/moviepy/video/VideoClip.py", line 1146, in __init__
     raise IOError(error)
 OSError: MoviePy Error: creation of None failed because of the following error:
 
-[Errno 2] No such file or directory: 'unset'.
+convert: attempt to perform an operation not allowed by the security policy `@/tmp/tmpwamu5_q7.txt' @ error/property.c/InterpretImageProperties/3706.
+convert: no images defined `PNG32:/tmp/tmpv34elrcs.png' @ error/convert.c/ConvertImageCommand/3229.
+.
 
 .This error can be due to the fact that ImageMagick is not installed on your computer, or (for Windows users) that you didn't specify the path to the ImageMagick binary in file conf.py, or that the path you specified is incorrect
