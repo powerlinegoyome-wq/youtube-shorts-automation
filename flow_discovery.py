@@ -96,7 +96,9 @@ async def run_playwright_capture():
 
     captured = []
 
-    print("🚀 Playwright başlatılıyor (Async)...")
+    print("🚀 Playwright başlatılıyor (Async) + Stealth...")
+    from playwright_stealth import stealth_async
+
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -106,15 +108,14 @@ async def run_playwright_capture():
                 "--disable-dev-shm-usage",
                 "--disable-gpu",
                 "--window-size=1280,900",
+                "--disable-blink-features=AutomationControlled"
             ]
         )
 
         ctx = await browser.new_context(
             viewport={"width": 1280, "height": 900},
             user_agent=(
-                "Mozilla/5.0 (X11; Linux x86_64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/120.0.0.0 Safari/537.36"
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
             ),
         )
 
@@ -123,6 +124,7 @@ async def run_playwright_capture():
         print("🍪 Cookie'ler yüklendi")
 
         page = await ctx.new_page()
+        await stealth_async(page)
 
         # Intercept ALL requests
         def on_request(request):
