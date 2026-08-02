@@ -38,6 +38,24 @@ discovery_nb = {
             "outputs": [],
             "source": discovery_lines,
         },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# CELL 3 — Sonuçları Görüntüle (Bunu da çalıştırın)\n",
+                "import os\n",
+                "if os.path.exists('flow_best_endpoint.json'):\n",
+                "    with open('flow_best_endpoint.json', 'r') as f:\n",
+                "        print('\\n\\n' + '='*50)\n",
+                "        print('LÜTFEN AŞAĞIDAKİ METNİ KOPYALAYIP BANA GÖNDERİN:')\n",
+                "        print('='*50 + '\\n')\n",
+                "        print(f.read())\n",
+                "else:\n",
+                "    print('Henüz endpoint bulunamadı. Lütfen 2. hücreyi tekrar çalıştırın.')\n"
+            ]
+        },
     ],
     "metadata": {
         "kernelspec": {
