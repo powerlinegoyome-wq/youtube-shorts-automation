@@ -15,8 +15,9 @@ import json
 setup_lines = [
     "# Cell 1 — Kurulum (ilk kez çalıştırın)\n",
     "!pip install -q faster-whisper edge-tts moviepy==1.0.3 Pillow -U google-generativeai\n",
-    "!apt-get update -qq && apt-get install -y -qq imagemagick > /dev/null 2>&1\n",
+    "!apt-get update -qq && apt-get install -y -qq imagemagick ffmpeg > /dev/null 2>&1\n",
     "!mv /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml.bak 2>/dev/null; true\n",
+    "!wget -qO Montserrat-Black.ttf https://github.com/google/fonts/raw/main/ofl/montserrat/Montserrat-Black.ttf\n",
     "print('✅ Kurulum tamamlandı!')",
 ]
 

@@ -283,14 +283,30 @@ def apply_ken_burns(clip, effect_type="zoom_in"):
 # 💬  MODULE 6: SUBTITLE ENGINE
 # ============================================================
 def build_subtitles(all_words, scenes, offsets):
-    """Create viral-style word-by-word subtitle clips.
+    """Create viral-style word-by-word subtitle clips in ASS format."""
+    print("\n💬 ASS Altyazıları (Viral Pop-up) oluşturuluyor...")
+    
+    def format_ass_time(seconds):
+        h = int(seconds // 3600)
+        m = int((seconds % 3600) // 60)
+        s = int(seconds % 60)
+        cs = int((seconds * 100) % 100)
+        return f"{h}:{m:02d}:{s:02d}.{cs:02d}"
 
-    - Hook words → gold (#FFD700), bigger font
-    - Normal words → white
-    - Every word has a thick black shadow behind it for depth
-    """
-    print("\n💬 Altyazılar oluşturuluyor...")
-    clips = []
+    ass_lines = [
+        "[Script Info]",
+        "ScriptType: v4.00+",
+        f"PlayResX: {W}",
+        f"PlayResY: {H}",
+        "",
+        "[V4+ Styles]",
+        "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding",
+        # Alignment 5 = Center. Outline 12 = thick black stroke. Shadow 0 = solid. PrimaryColour = White.
+        "Style: Hormozi,Montserrat Black,140,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,14,0,5,0,0,0,1",
+        "",
+        "[Events]",
+        "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text"
+    ]
 
     for si, (words, scene) in enumerate(zip(all_words, scenes)):
         hooks = {w.lower().rstrip(".,?!:;") for w in scene.get("hook_words", [])}
@@ -298,33 +314,25 @@ def build_subtitles(all_words, scenes, offsets):
 
         for wd in words:
             txt = wd["word"].upper()
-            s = off + wd["start"]
-            e = off + wd["end"]
+            start_str = format_ass_time(off + wd["start"])
+            end_str = format_ass_time(off + wd["end"])
 
             is_hook = wd["word"].lower().rstrip(".,?!:;") in hooks
-            color = "#FFD700" if is_hook else "white"
-            fs = 170 if is_hook else 145
+            
+            # BGR color for ASS: Yellow is 00FFFF, Green is 00FF00
+            color_tag = r"{\c&H00FFFF&}" if is_hook else ""
+            
+            # Pop-up animation: Starts 50%, goes to 120% at 80ms, then down to 100% at 120ms
+            anim_tag = r"{\fscx50\fscy50\t(0,80,\fscx120\fscy120)\t(80,120,\fscx100\fscy100)}"
+            
+            line = f"Dialogue: 0,{start_str},{end_str},Hormozi,,0,0,0,,{anim_tag}{color_tag}{txt}"
+            ass_lines.append(line)
 
-            # Shadow layer (3-D depth)
-            shadow = TextClip(
-                txt, fontsize=fs, color="black", font="Impact",
-                stroke_color="black", stroke_width=22,
-            )
-            shadow = shadow.set_position(("center", "center"))
-            shadow = shadow.set_start(s).set_end(e)
+    with open("subtitles.ass", "w", encoding="utf-8") as f:
+        f.write("\n".join(ass_lines))
 
-            # Main colored text
-            main = TextClip(
-                txt, fontsize=fs, color=color, font="Impact",
-                stroke_color="black", stroke_width=8,
-            )
-            main = main.set_position(("center", "center"))
-            main = main.set_start(s).set_end(e)
-
-            clips.extend([shadow, main])
-
-    print(f"   ✅ {len(clips) // 2} kelime altyazısı hazır")
-    return clips
+    print("   ✅ subtitles.ass dosyası yazıldı")
+    return "subtitles.ass"
 
 
 # ============================================================
@@ -390,8 +398,8 @@ def mix_audio(video_clip, music_path="bg_music.wav"):
 # 🎬  MODULE 8: COMPOSER
 # ============================================================
 async def compose_video(scenes, images, voices, all_words):
-    """Assemble all elements into the final video."""
-    print("\n🎬 Video birleştiriliyor...")
+    """Assemble all elements into the final video using FFmpeg."""
+    print("\n🎬 Video (Temp) birleştiriliyor...")
 
     effects = ["zoom_in", "pan_right", "zoom_out", "pan_left"]
     scene_clips = []
@@ -414,31 +422,42 @@ async def compose_video(scenes, images, voices, all_words):
         total_time += dur
 
     # Combine scenes (clean cuts — viral format)
-    bg = concatenate_videoclips(scene_clips)
-
-    # Overlay subtitles
-    subs = build_subtitles(all_words, scenes, offsets)
-    final = CompositeVideoClip([bg] + subs, size=(W, H))
+    final = concatenate_videoclips(scene_clips)
 
     # Mix background music
     final = mix_audio(final)
 
-    # Render
-    name = f"shorts_{random.randint(1000, 9999)}.mp4"
-    print(f"\n🔥 Render başlıyor: {name}")
+    # Render temp video (Without subs)
+    temp_name = "temp_shorts.mp4"
+    print(f"\n⏳ Ara render başlıyor (Altyazısız)...: {temp_name}")
     final.write_videofile(
-        name,
+        temp_name,
         fps=FPS,
         codec="libx264",
         audio_codec="aac",
         logger="bar",
-        preset="medium",
-        bitrate="8000k",
-        audio_bitrate="192k",
+        preset="fast",
     )
+    
+    # Generate ASS Subtitles
+    ass_file = build_subtitles(all_words, scenes, offsets)
+
+    name = f"shorts_{random.randint(1000, 9999)}.mp4"
+    print(f"\n🔥 FFmpeg ile Altyazılar Basılıyor (Hardcode)...: {name}")
+    
+    import subprocess
+    cmd = [
+        "ffmpeg", "-y",
+        "-i", temp_name,
+        "-vf", f"ass={ass_file}:fontsdir=.",
+        "-c:v", "libx264",
+        "-c:a", "copy",
+        name
+    ]
+    subprocess.run(cmd, check=True)
 
     print(f"\n{'=' * 50}")
-    print(f"✅ VIDEO HAZIR: {name}")
+    print(f"✅ MUHTEŞEM VİDEO HAZIR: {name}")
     print(f"   Süre : {final.duration:.1f}s")
     print(f"   Boyut: {W}x{H} @ {FPS}fps")
     print(f"{'=' * 50}")
