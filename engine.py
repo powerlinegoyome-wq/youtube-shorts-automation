@@ -188,19 +188,49 @@ def generate_images(scenes):
 
 
 # ============================================================
-# 🎤  MODULE 3: VOICE ENGINE
+# 🎤  MODULE 3: VOICE ENGINE (ELEVENLABS)
 # ============================================================
 async def generate_voices(scenes):
-    """Generate energetic voiceover for each scene."""
-    print("\n🎤 Sesler üretiliyor...")
+    """Generate ultra-realistic voiceover using ElevenLabs API."""
+    print("\n🎤 ElevenLabs Sesleri (Ultra-Gerçekçi) üretiliyor...")
+    
+    ELEVENLABS_API_KEY = "sk_651380d95dec2af7b26a06088c46d94b9c171fc680155ede"
+    # 'Adam' is the most viral deep male voice for Dark Psychology
+    VOICE_ID = "pNInz6obpgDQGcFmaJgB"
+    
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
+    headers = {
+        "xi-api-key": ELEVENLABS_API_KEY,
+        "Content-Type": "application/json"
+    }
+    
     files = []
     for i, scene in enumerate(scenes):
         path = f"voice_{i}.mp3"
-        comm = edge_tts.Communicate(scene["text"], VOICE, rate=VOICE_RATE)
-        await comm.save(path)
-        files.append(path)
-        dur = AudioFileClip(path).duration
-        print(f"   ✅ Sahne {i+1}: {dur:.1f}s")
+        print(f"   Sahne {i+1} indiriliyor...")
+        
+        payload = {
+            "text": scene["text"],
+            "model_id": "eleven_monolingual_v1",
+            "voice_settings": {
+                "stability": 0.50,
+                "similarity_boost": 0.75,
+                "style": 0.0,
+                "use_speaker_boost": True
+            }
+        }
+        
+        # API İsteği
+        resp = requests.post(url, json=payload, headers=headers, timeout=60)
+        if resp.status_code == 200:
+            with open(path, "wb") as f:
+                f.write(resp.content)
+            files.append(path)
+            dur = AudioFileClip(path).duration
+            print(f"   ✅ Başarılı: {dur:.1f}s")
+        else:
+            raise Exception(f"ElevenLabs API Hatası: {resp.text}")
+            
     return files
 
 
