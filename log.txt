@@ -1,35 +1,26 @@
 Traceback (most recent call last):
-  File "/tmp/ipykernel_914/1490017416.py", line 80, in run_with_error_reporting
+  File "/tmp/ipykernel_914/1735726955.py", line 108, in run_with_error_reporting
     await main_process()
-  File "/tmp/ipykernel_914/1490017416.py", line 24, in main_process
-    response = model_ai.generate_content(prompt)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/generativeai/generative_models.py", line 331, in generate_content
-    response = self._client.generate_content(
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/ai/generativelanguage_v1beta/services/generative_service/client.py", line 835, in generate_content
-    response = rpc(
-               ^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/api_core/gapic_v1/method.py", line 128, in __call__
-    return wrapped_func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/api_core/retry/retry_unary.py", line 294, in retry_wrapped_func
-    return retry_target(
-           ^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/api_core/retry/retry_unary.py", line 156, in retry_target
-    next_sleep = _retry_error_helper(
-                 ^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/api_core/retry/retry_base.py", line 216, in _retry_error_helper
-    raise final_exc from source_exc
-  File "/usr/local/lib/python3.12/dist-packages/google/api_core/retry/retry_unary.py", line 147, in retry_target
-    result = target()
-             ^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/api_core/timeout.py", line 130, in func_with_timeout
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/api_core/grpc_helpers.py", line 55, in error_remapped_callable
-    return callable_(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/google/ai/generativelanguage_v1beta/services/generative_service/transports/rest.py", line 1161, in __call__
-    raise core_exceptions.from_http_response(response)
-google.api_core.exceptions.NotFound: 404 POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?%24alt=json%3Benum-encoding%3Dint: This model models/gemini-2.5-flash is no longer available to new users. Please update your code to use a newer model for the latest features and improvements.
+  File "/tmp/ipykernel_914/1735726955.py", line 63, in main_process
+    urllib.request.urlretrieve(img_url, img_path)
+  File "/usr/lib/python3.12/urllib/request.py", line 240, in urlretrieve
+    with contextlib.closing(urlopen(url, data)) as fp:
+                            ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 403: Forbidden
