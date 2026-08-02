@@ -96,8 +96,7 @@ async def run_playwright_capture():
 
     captured = []
 
-    print("🚀 Playwright başlatılıyor (Async) + Stealth...")
-    from playwright_stealth import stealth_async
+    print("🚀 Playwright başlatılıyor (Async) + Stealth args...")
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(
@@ -124,7 +123,6 @@ async def run_playwright_capture():
         print("🍪 Cookie'ler yüklendi")
 
         page = await ctx.new_page()
-        await stealth_async(page)
 
         # Intercept ALL requests
         def on_request(request):
