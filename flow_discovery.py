@@ -85,19 +85,20 @@ def parse_cookies_for_playwright():
 
 # ── PHASE 1: Playwright Traffic Capture ──────────────────────────────────────
 
-def run_playwright_capture():
+async def run_playwright_capture():
     """
     Open Google Flow with Playwright, intercept ALL network requests,
     try to click Generate, then dump every request to flow_requests.json.
     """
-    from playwright.sync_api import sync_playwright
+    from playwright.async_api import async_playwright
     import json
+    import asyncio
 
     captured = []
 
-    print("🚀 Playwright başlatılıyor...")
-    with sync_playwright() as p:
-        browser = p.chromium.launch(
+    print("🚀 Playwright başlatılıyor (Async)...")
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(
             headless=True,
             args=[
                 "--no-sandbox",
@@ -108,7 +109,7 @@ def run_playwright_capture():
             ]
         )
 
-        ctx = browser.new_context(
+        ctx = await browser.new_context(
             viewport={"width": 1280, "height": 900},
             user_agent=(
                 "Mozilla/5.0 (X11; Linux x86_64) "
@@ -118,10 +119,10 @@ def run_playwright_capture():
         )
 
         # Inject cookies
-        ctx.add_cookies(parse_cookies_for_playwright())
+        await ctx.add_cookies(parse_cookies_for_playwright())
         print("🍪 Cookie'ler yüklendi")
 
-        page = ctx.new_page()
+        page = await ctx.new_page()
 
         # Intercept ALL requests
         def on_request(request):
@@ -142,14 +143,14 @@ def run_playwright_capture():
                 captured.append(entry)
                 print(f"  📡 [{request.method}] {url[:120]}")
 
-        def on_response(response):
+        async def on_response(response):
             url = response.url
             if any(kw in url for kw in [
                 "googleapis.com", "aisandbox", "labs.google/fx/api",
                 "generate", "predict", "veo", "imagen",
             ]):
                 try:
-                    body = response.body()
+                    body = await response.body()
                     # Find matching captured request and add response
                     for entry in reversed(captured):
                         if entry["url"] == url:
@@ -165,28 +166,28 @@ def run_playwright_capture():
         # Navigate to Flow
         print(f"🌐 Flow açılıyor: {FLOW_URL}")
         try:
-            page.goto(FLOW_URL, wait_until="networkidle", timeout=30000)
+            await page.goto(FLOW_URL, wait_until="networkidle", timeout=30000)
         except Exception as e:
             print(f"  ⚠️  Yükleme timeout (normal): {e}")
 
         # Screenshot
-        page.screenshot(path="flow_screenshot_1.png", full_page=False)
+        await page.screenshot(path="flow_screenshot_1.png", full_page=False)
         print("📸 Ekran görüntüsü alındı: flow_screenshot_1.png")
 
         # Get page text to understand UI
-        page_text = page.inner_text("body")
+        page_text = await page.inner_text("body")
         print("\n📄 Sayfa içeriği (ilk 1000 karakter):")
         print(page_text[:1000])
 
         # Collect all clickable elements
-        buttons = page.query_selector_all("button")
-        inputs  = page.query_selector_all("input, textarea")
+        buttons = await page.query_selector_all("button")
+        inputs  = await page.query_selector_all("input, textarea")
         print(f"\n🔘 Bulunan butonlar: {len(buttons)}")
         print(f"✏️  Bulunan input'lar: {len(inputs)}")
 
         for i, btn in enumerate(buttons[:20]):
             try:
-                txt = btn.inner_text().strip()
+                txt = (await btn.inner_text()).strip()
                 print(f"  Buton {i}: '{txt}'")
             except Exception:
                 pass
@@ -196,11 +197,11 @@ def run_playwright_capture():
         filled = False
         for inp in inputs:
             try:
-                ph = inp.get_attribute("placeholder") or ""
-                label = inp.get_attribute("aria-label") or ""
+                ph = (await inp.get_attribute("placeholder")) or ""
+                label = (await inp.get_attribute("aria-label")) or ""
                 if any(kw in (ph + label).lower() for kw in ["prompt", "describe", "write", "type", "enter"]):
-                    inp.click()
-                    inp.fill(prompt_text)
+                    await inp.click()
+                    await inp.fill(prompt_text)
                     filled = True
                     print(f"✅ Prompt alanı dolduruldu: '{ph or label}'")
                     break
@@ -210,7 +211,7 @@ def run_playwright_capture():
         if not filled:
             print("⚠️  Prompt alanı bulunamadı, genel textarea deneniyor...")
             try:
-                page.keyboard.type(prompt_text)
+                await page.keyboard.type(prompt_text)
             except Exception:
                 pass
 
@@ -218,23 +219,23 @@ def run_playwright_capture():
         generate_keywords = ["generate", "create", "run", "make", "go"]
         for btn in buttons:
             try:
-                txt = btn.inner_text().strip().lower()
+                txt = (await btn.inner_text()).strip().lower()
                 if any(kw in txt for kw in generate_keywords):
                     print(f"🖱️  Generate butonu bulundu ve tıklanıyor: '{txt}'")
-                    btn.click()
-                    page.wait_for_timeout(8000)  # Wait for generation
+                    await btn.click()
+                    await page.wait_for_timeout(8000)  # Wait for generation
                     break
             except Exception:
                 pass
 
         # Second screenshot after generation attempt
-        page.screenshot(path="flow_screenshot_2.png")
+        await page.screenshot(path="flow_screenshot_2.png")
         print("📸 Üretim sonrası ekran görüntüsü: flow_screenshot_2.png")
 
         # Wait a bit more for async requests
-        page.wait_for_timeout(5000)
+        await page.wait_for_timeout(5000)
 
-        browser.close()
+        await browser.close()
 
     # Save all captured requests
     with open("flow_requests.json", "w") as f:
@@ -363,13 +364,13 @@ def _replace_prompt_in_dict(d, new_prompt):
 
 # ── MAIN ─────────────────────────────────────────────────────────────────────
 
-def main():
+async def main():
     print("=" * 60)
     print("🔬 GOOGLE FLOW API DISCOVERY ENGINE")
     print("=" * 60)
 
     # Phase 1: Capture
-    captured = run_playwright_capture()
+    captured = await run_playwright_capture()
 
     # Show screenshots
     try:
@@ -396,4 +397,12 @@ def main():
 
     return best
 
-main()
+import asyncio
+try:
+    loop = asyncio.get_running_loop()
+    # In Colab/Jupyter, we must use create_task or await directly, but since this is inside a cell:
+    import nest_asyncio
+    nest_asyncio.apply()
+    asyncio.run(main())
+except RuntimeError:
+    asyncio.run(main())

@@ -17,7 +17,7 @@ if discovery_lines and discovery_lines[-1].strip() == "":
 # ─── Build flow_discovery.ipynb ──────────────────────────────────────────────
 setup = [
     "# CELL 1 — Kurulum (Bir kez çalıştırın)\n",
-    "!pip install -q playwright\n",
+    "!pip install -q playwright nest-asyncio\n",
     "!playwright install chromium --with-deps\n",
     "print('✅ Playwright kuruldu')\n",
 ]
