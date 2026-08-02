@@ -1,26 +1,9 @@
 Traceback (most recent call last):
-  File "/tmp/ipykernel_914/1735726955.py", line 108, in run_with_error_reporting
-    await main_process()
-  File "/tmp/ipykernel_914/1735726955.py", line 63, in main_process
-    urllib.request.urlretrieve(img_url, img_path)
-  File "/usr/lib/python3.12/urllib/request.py", line 240, in urlretrieve
-    with contextlib.closing(urlopen(url, data)) as fp:
-                            ^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
-    return opener.open(url, data, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
-    response = meth(req, response)
-               ^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
-    response = self.parent.error(
-               ^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
-    return self._call_chain(*args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
-    result = func(*args)
-             ^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
-    raise HTTPError(req.full_url, code, msg, hdrs, fp)
-urllib.error.HTTPError: HTTP Error 403: Forbidden
+  File "/tmp/ipykernel_3833/3296078971.py", line 529, in safe_run
+    await main()
+  File "/tmp/ipykernel_3833/3296078971.py", line 513, in main
+    voices = await generate_voices(scenes)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ipykernel_3833/3296078971.py", line 232, in generate_voices
+    raise Exception(f"ElevenLabs API Hatası: {resp.text}")
+Exception: ElevenLabs API Hatası: {"detail":{"type":"validation_error","code":"unsupported_model","message":"The models eleven_monolingual_v1 and eleven_multilingual_v1 have been deprecated and are no longer available. Please migrate to a newer TTS model such as eleven_v3, eleven_multilingual_v2, or eleven_flash_v2_5.","status":"unsupported_model","request_id":"664ec115a727074aa4b8a05e1373902e","param":"model_id"}}
